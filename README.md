@@ -12,5 +12,5 @@ Steps:
 
 To Run:
 
-- do node server.js in root directory and it will the server
-- then post request via postman or thunderclient to `http://localhost:{PORT}/send-emails` and it will send email to each email
+- run `node server.js` in terminal and it will run the server
+- then do post request via postman or thunderclient to `http://localhost:{PORT}/send-emails` and it will send email to each email
