@@ -22,12 +22,12 @@ app.post("/send-emails", async (req, res) => {
 
       // Send email via Resend API
       await axios.post(
-        "https://api.resend.com/v1/emails",
+        "https://api.resend.com/emails",
         {
           to: recipient.email,
           subject: emailTemplate.subject,
           html: `<p>${personalizedBody.replace(/\n/g, "<br>")}</p>`,
-          from: "admin@buildrappo.com",
+          from: "Vignesh from Rappo <admin@buildrappo.com>",
         },
         {
           headers: {
