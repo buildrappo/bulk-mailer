@@ -23,6 +23,7 @@ app.post("/send-emails", async (req, res) => {
       // Send email via Resend API
       await axios.post(
         "https://api.resend.com/emails",
+        "https://api.resend.com/emails",
         {
           to: recipient.email,
           subject: emailTemplate.subject,
