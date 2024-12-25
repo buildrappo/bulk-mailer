@@ -3,8 +3,8 @@ const axios = require("axios");
 require("dotenv").config();
 
 // Import email list and template
-const emailList = require("./emailList");
-const emailTemplate = require("./emailTemplate");
+const emailList = require("./emailList2");
+const emailTemplate = require("./emailTemplate2");
 
 const app = express();
 app.use(express.json());
@@ -22,12 +22,12 @@ app.post("/send-emails", async (req, res) => {
 
       // Send email via Resend API
       await axios.post(
-        "https://api.resend.com/v1/emails",
+        "https://api.resend.com/emails",
         {
           to: recipient.email,
           subject: emailTemplate.subject,
           html: `<p>${personalizedBody.replace(/\n/g, "<br>")}</p>`,
-          from: "admin@buildrappo.com",
+          from: "Vignesh from Rappo <vignesh@rappo.pro>",
         },
         {
           headers: {
