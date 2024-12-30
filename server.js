@@ -6,6 +6,9 @@ require("dotenv").config();
 const emailList = require("./emailList2");
 const emailTemplate = require("./emailTemplate2");
 
+// Import avatar URL list
+const avatarUrlList = require('./avatarUrlList');
+
 const app = express();
 app.use(express.json());
 
@@ -48,6 +51,69 @@ app.post("/send-emails", async (req, res) => {
       error.response?.data || error.message
     );
     res.status(500).send({ error: "Failed to send emails" });
+  }
+});
+
+app.get("/search-avatars", async (req, res) => {
+  try {
+    const results = [];
+    
+    for (const avatar of avatarUrlList) {
+      // Call RapidAPI endpoint for each avatar URL
+      const response = await axios.get(`https://${process.env.RAPIDAPI_HOST}/reverse-image-search`, {
+        params: {
+          url: avatar.url,
+          limit: 10,
+          safe_search: 'off'
+        },
+        headers: {
+          'x-rapidapi-host': process.env.RAPIDAPI_HOST,
+          'x-rapidapi-key': process.env.RAPIDAPI_KEY
+        }
+      });
+
+      // Check if response data has the expected structure
+      if (response.data && response.data.data) {
+        // Filter LinkedIn URLs and domains from the response
+        const linkedInResults = response.data.data.filter(result => {
+          return result.link.includes('linkedin.com') || result.domain.includes('linkedin.com');
+        }).map(result => {
+          // Extract username from LinkedIn URL
+          const urlParts = result.link.split('/');
+          const username = urlParts[urlParts.length - 1] || urlParts[urlParts.length - 2];
+          
+          return {
+            linkedInUrl: result.link,
+            username: username
+          };
+        });
+
+        results.push({
+          avatarUrl: avatar.url,
+          matches: linkedInResults
+        });
+      } else {
+        console.warn('Unexpected response data format:', response.data);
+      }
+
+      // Add a small delay to avoid hitting API rate limits
+      await new Promise(resolve => setTimeout(resolve, 1000));
+    }
+
+    res.status(200).json({
+      success: true,
+      results: results
+    });
+    
+  } catch (error) {
+    console.error(
+      "Error searching avatars:",
+      error.response?.data || error.message
+    );
+    res.status(500).json({ 
+      success: false,
+      error: "Failed to search avatars" 
+    });
   }
 });
 
