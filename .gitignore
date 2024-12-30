@@ -2,3 +2,4 @@ node_modules
 .env
 emailList.js
 emailList2.js
+avatarUrlList.js
